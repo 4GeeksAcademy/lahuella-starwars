@@ -1,17 +1,68 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useContext } from 'react';
+import { Context } from '../store/appContext';
+import { Link } from 'react-router-dom';
 
 export const Navbar = () => {
-	return (
-		<nav className="navbar navbar-light bg-light mb-3">
-			<Link to="/">
-				<span className="navbar-brand mb-0 h1">React Boilerplate</span>
-			</Link>
-			<div className="ml-auto">
-				<Link to="/demo">
-					<button className="btn btn-primary">Check the Context in action</button>
-				</Link>
-			</div>
-		</nav>
-	);
+    const { store, actions } = useContext(Context);
+
+    return (
+        <nav className="navbar navbar-expand-lg navbar-dark fixed-top">
+            <div className="container">
+                <Link className="navbar-brand" to="/">
+                    <span className="logo">Star Wars Wiki</span>
+                </Link>
+                <button
+                    className="navbar-toggler"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#navbarNav"
+                    aria-controls="navbarNav"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation"
+                >
+                    <span className="navbar-toggler-icon"></span>
+                </button>
+                <div className="collapse navbar-collapse" id="navbarNav">
+                    <ul className="navbar-nav ms-auto">
+                        <li className="nav-item dropdown">
+                            <a
+                                className="nav-link dropdown-toggle"
+                                href="#"
+                                id="navbarDropdown"
+                                role="button"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false"
+                            >
+                                Favorites
+                            </a>
+                            <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
+                                {store.favorites.length > 0 ? (
+                                    store.favorites.map((favorite, index) => (
+                                        <li key={index} className="d-flex justify-content-between">
+                                            <a className="dropdown-item">
+                                            <Link to={`/single/${favorite.id}`} className='Link-nav'>{favorite.name}</Link>
+                                            </a>
+                                            <button
+                                                className="btn btn-link text-danger"
+                                                onClick={() => actions.removeFavorite(favorite.id)}
+                                                aria-label="Remove from favorites"
+                                            >
+                                                <i className="fas fa-trash-alt"></i>
+                                            </button>
+                                        </li>
+                                    ))
+                                ) : (
+                                    <li>
+                                        <a className="dropdown-item" href="#">
+                                            No Favorites Yet
+                                        </a>
+                                    </li>
+                                )}
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    );
 };

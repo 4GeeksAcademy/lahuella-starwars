@@ -1,3 +1,202 @@
-/* 
-    General Styles
-*/
+body {
+    font-family: 'Orbitron', sans-serif;
+    background-color: #1c1c1c;
+    color: white;
+    background: url('https://galacticsabers.co/wp-content/uploads/2023/07/mattgallodesigns_planets_in_space_inspired_by_star_wars_hyper_r_52d158e5-0fc1-4d86-8ecd-6d58ecbf3a69.png')
+    no-repeat center center fixed;
+    background-size: cover;
+    padding-top: 100px;
+}
+
+h1, h2, h3 {
+    font-family: 'Russo One', sans-serif;
+    color: #ffcc00;
+}
+
+.card {
+    background-color: rgba(0, 0, 0, 0.7);
+    border-radius: 8px;
+    margin: 10px;
+    padding: 15px;
+    color: white;
+    box-shadow: 0px 4px 20px rgba(255, 255, 255, 0.1);
+    transition: transform 0.3s;
+}
+
+.card:hover {
+    transform: scale(1.02);
+}
+
+.card-title {
+    font-family: 'Russo One', sans-serif;
+    color: #ffcc00;
+    font-size: 15px;
+}
+
+.btn {
+    background-color: #ffcc00;
+    color: black;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-link{
+    margin-bottom: 12px;
+}
+
+.btn:hover {
+    background-color: #e6b800;
+}
+
+.dropdown-menu {
+    background-color: #333;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+.dropdown-item {
+    color: #ffcc00;
+    padding: 8px;
+    cursor: pointer;
+}
+
+.dropdown-item:hover {
+    background-color: #444;
+}
+
+.fade-in {
+    animation: fadeIn 1s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.navbar {
+    background-color: #000000;
+    padding: 15px 0;
+    box-shadow: 0px 4px 15px rgba(255, 255, 255, 0.1);
+}
+
+.navbar-brand {
+    font-family: 'Russo One', sans-serif;
+    color: #ffcc00;
+    font-size: 2rem;
+    text-transform: uppercase;
+}
+
+.navbar-toggler-icon {
+    background-color: #ffcc00;
+}
+
+.navbar-nav .nav-link {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.2rem;
+    color: #fff;
+    padding: 10px 15px;
+    transition: color 0.3s ease;
+}
+
+.Link-nav {
+    color: white;
+    text-decoration: none;
+}
+
+.Link-nav:hover{
+    color:#ffcc00;
+}
+.navbar-nav .nav-link:hover {
+    color: #ffcc00;
+}
+
+.navbar-nav .nav-item.active .nav-link {
+    color: #ffcc00;
+}
+
+.fixed-top {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+
+.item-card {
+    display: flex;
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  }
+
+  .item-card img {
+    border-radius: 15px 0 0 15px;
+    width: auto;
+    height: 75%;
+    object-fit: cover;
+  }
+  
+  .item-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 20px;
+    color: white;
+    flex-grow: 1;
+    background-color: rgba(0, 0, 0, 0.75);
+    border-radius: 0 15px 15px 0;
+  }
+  
+  .item-info h3 {
+    color: #fff;
+    margin-bottom: 20px;
+  }
+  
+  .item-info ul {
+    list-style-type: none;
+    padding-left: 0;
+  }
+  
+  .item-info li {
+    margin: 10px 0;
+  }
+  
+  .item-info strong {
+    color: #ffd700;
+  }
+
+.card-body .d-flex {
+    justify-content: space-between;
+  }
+  
+  .card-body .btn {
+    width: 48%;
+    margin: 5px 0;
+  }
+  
+  .card-body .btn-info {
+    background-color: #007bff;
+    border-color: #007bff;
+  }
+  
+  .card-body .btn-warning {
+    background-color: #ffc107;
+    border-color: #ffc107;
+  }
+  
+  .card-img-top {
+    object-fit: cover;
+    height: 200px;
+  } 
+  .btn {
+    font-size: 12px;
+  }
