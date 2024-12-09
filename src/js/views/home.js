@@ -18,7 +18,10 @@ export const Home = () => {
                                 <img src={imageUrl} alt={item.name} className="card-img-top" />
                                 <div className="card-body">
                                     <h5 className="card-title">{item.name}</h5>
-                                    <Link to={`/single/${item.uid}`} className="btn btn-primary me-1">
+                                    <Link
+                                        to={`/single/${item.uid}`}
+                                        state={{ category: type }}
+                                        className="btn btn-primary me-1">
                                         Info
                                     </Link>
                                     <button

@@ -1,91 +1,73 @@
-import React, { useContext, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { Context } from "../store/appContext";
-
-const getImageUrl = (id, category) => {
-  const baseUrl = "https://starwars-visualguide.com/assets/img";
-  switch (category) {
-    case "people":
-      return `${baseUrl}/characters/${id}.jpg`;
-    case "vehicles":
-      return `${baseUrl}/vehicles/${id}.jpg`;
-    case "starships":
-      return `${baseUrl}/starships/${id}.jpg`;
-    case "planets":
-      return `${baseUrl}/planets/${id}.jpg`;
-    default:
-      return "";
-  }
-};
+import React, { useEffect, useState } from "react";
+import { useLocation, useParams } from "react-router-dom";
 
 export const Single = () => {
+  const { state } = useLocation();
   const { theid } = useParams();
-  const { store } = useContext(Context);
-  const [item, setItem] = useState(null);
+  const [details, setDetails] = useState(null);
   const [imageExists, setImageExists] = useState(false);
-  const [category, setCategory] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+  const category = state?.category || "people";
 
+  const getImageUrl = (id, category) => {
+    const baseUrl = "https://starwars-visualguide.com/assets/img";
+    switch (category) {
+      case "characters":
+        return `${baseUrl}/characters/${id}.jpg`;
+      case "vehicles":
+        return `${baseUrl}/vehicles/${id}.jpg`;
+      case "starships":
+        return `${baseUrl}/starships/${id}.jpg`;
+      case "planets":
+        return `${baseUrl}/planets/${id}.jpg`;
+      default:
+        return "";
+    }
+  };
   useEffect(() => {
-
-    let foundItem = null;
-    let category = "";
-
-    if (store.characters.length > 0) {
-      foundItem = store.characters.find((character) => character.uid === theid);
-      if (foundItem) category = "people";
-    }
-
-    if (!foundItem && store.vehicles.length > 0) {
-      foundItem = store.vehicles.find((vehicle) => vehicle.uid === theid);
-      if (foundItem) category = "vehicles";
-    }
-
-    if (!foundItem && store.starships.length > 0) {
-      foundItem = store.starships.find((starship) => starship.uid === theid);
-      if (foundItem) category = "starships";
-    }
-
-    if (!foundItem && store.planets.length > 0) {
-      foundItem = store.planets.find((planet) => planet.uid === theid);
-      if (foundItem) category = "planets";
-    }
-
-    if (foundItem) {
-      setItem(foundItem);
-      setCategory(category);
-    }
-  }, [store, theid]);
-
-  useEffect(() => {
-    if (item) {
-      const imageUrl = getImageUrl(item.uid, category);
-      const checkImage = async () => {
-        try {
-          const response = await fetch(imageUrl, { method: "HEAD" });
-          setImageExists(response.ok);
-        } catch (error) {
-          setImageExists(false);
+    const fetchDetails = async () => {
+      try {
+        const response = await fetch(`https://www.swapi.tech/api/${category}/${theid}`);
+        const data = await response.json();
+        if (data.result) {
+          setDetails(data.result.properties);
         }
-      };
+      } 
+    };
 
-      checkImage();
-    }
-  }, [item, category]);
+    fetchDetails();
+  }, [category, theid]);
 
-  if (!item) {
+  useEffect(() => {
+    const url = getImageUrl(theid, category);
+    setImageUrl(url);
+
+    const checkImage = async () => {
+      try {
+        const response = await fetch(url, { method: "HEAD" });
+        setImageExists(response.ok);
+      } catch (error) {
+        setImageExists(false);
+      }
+    };
+
+    checkImage();
+  }, [category, theid]);
+
+  if (!details) {
     return <div>Loading...</div>;
   }
 
   return (
     <div className="container mt-5">
-      <h1>{item.name}</h1>
+      <h1>{details.name || "Details"}</h1>
       <div className="row">
         <div className="col-md-12">
           <div className="item-card d-flex">
             {imageExists ? (
               <img
-                src={getImageUrl(item.uid, category)}
-                alt={item.name}
+                src={imageUrl}
+                alt={details.name}
                 className="img-fluid rounded-left"
               />
             ) : (
@@ -94,17 +76,11 @@ export const Single = () => {
             <div className="item-info p-4">
               <h3>Details</h3>
               <ul>
-                {Object.keys(item).map((key) => {
-                  if (key !== "uid") {
-                    return (
-                      <li key={key}>
-                        <strong>{key.charAt(0).toUpperCase() + key.slice(1)}:</strong>{" "}
-                        {item[key]}
-                      </li>
-                    );
-                  }
-                  return null;
-                })}
+                {Object.entries(details).map(([key, value]) => (
+                  <li key={key}>
+                    <strong>{key.charAt(0).toUpperCase() + key.slice(1)}:</strong> {value}
+                  </li>
+                ))}
               </ul>
             </div>
           </div>
