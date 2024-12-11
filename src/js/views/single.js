@@ -1,23 +1,30 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom"; // Reemplazamos useHistory por useNavigate
-import { Context } from "../store/appContext"; // Importa el contexto de la app
+import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { Context } from "../store/appContext";
 
 const Single = () => {
-  const { theid } = useParams(); // Obtiene el ID del parámetro de la URL
-  const { state } = useLocation(); // Obtiene el estado (como la categoría)
-  const { store, actions } = useContext(Context); // Accede al contexto para obtener el store y las acciones
-  const [item, setItem] = useState(null); // Estado para guardar el ítem
-  const [imageExists, setImageExists] = useState(false); // Estado para verificar si la imagen existe
-  const [details, setDetails] = useState(null); // Estado para guardar los detalles del ítem
-  const category = state?.category; // Obtiene la categoría desde el estado
+  const { theid } = useParams();
+  const { state } = useLocation();
+  const { store, actions } = useContext(Context);
+  const [item, setItem] = useState(null);
+  const [imageUrl, setImageUrl] = useState("");
+  const [details, setDetails] = useState(null);
+  const category = state?.category;
 
-  const navigate = useNavigate(); // Usamos useNavigate en lugar de useHistory
+  const navigate = useNavigate();
+  const selectedDetails = {
+    characters: ["name", "height", "birth_year", "gender"],
+    vehicles: ["name", "model", "manufacturer", "cost_in_credits"],
+    starships: ["name", "model", "crew", "hyperdrive_rating"],
+    planets: ["name", "climate", "terrain", "population"],
+  };
 
-  // Función para verificar si la imagen existe
+  const defaultImageUrl = "https://wallpapers.com/images/featured/logo-de-star-wars-xcw4lfbj6xjx2qvm.jpg";
+
   const getImageUrl = (id, category) => {
     const baseUrl = `https://starwars-visualguide.com/assets/img`;
     switch (category) {
-      case "people":
+      case "characters":
         return `${baseUrl}/characters/${id}.jpg`;
       case "vehicles":
         return `${baseUrl}/vehicles/${id}.jpg`;
@@ -30,7 +37,6 @@ const Single = () => {
     }
   };
 
-  // Fetch los detalles del ítem
   useEffect(() => {
     if (category && store[category]?.length > 0) {
       const foundItem = store[category].find((item) => item.uid === theid);
@@ -38,40 +44,33 @@ const Single = () => {
     }
   }, [store, theid, category]);
 
-  // Obtener detalles adicionales de la API
   useEffect(() => {
     if (item) {
       const fetchDetails = async () => {
         try {
-          // Definir las categorías y sus rutas correspondientes
           const categoryUrls = {
-            characters: "people",  // Para personajes
-            vehicles: "vehicles",  // Para vehículos
-            starships: "starships", // Para naves
-            planets: "planets"     // Para planetas
+            characters: "people",
+            vehicles: "vehicles",
+            starships: "starships",
+            planets: "planets"
           };
-      
-          // Construir la URL según la categoría seleccionada
           const categoryUrl = categoryUrls[category];
           if (!categoryUrl) {
             console.error("Invalid category:", category);
             return;
           }
-      
-          // Hacer el fetch usando la URL correcta
+
           const response = await fetch(`https://www.swapi.tech/api/${categoryUrl}/${theid}`);
-          
-          // Verificar si la respuesta es exitosa
+
           if (!response.ok) {
             throw new Error(`Error fetching details: ${response.status}`);
           }
-      
-          // Verificar si la respuesta es de tipo JSON
+
           const contentType = response.headers.get("Content-Type");
           if (contentType && contentType.includes("application/json")) {
             const data = await response.json();
             if (data.result) {
-              setDetails(data.result.properties); // Guardamos las propiedades del ítem
+              setDetails(data.result.properties);
             } else {
               console.error("Error: No result found for this item");
             }
@@ -81,22 +80,25 @@ const Single = () => {
         } catch (error) {
           console.error("Error fetching details:", error);
         }
-      };      
+      };
 
       fetchDetails();
     }
   }, [item, category, theid]);
 
-  // Verificar si la imagen existe
   useEffect(() => {
     if (item) {
       const imageUrl = getImageUrl(item.uid, category);
       const checkImage = async () => {
         try {
           const response = await fetch(imageUrl, { method: "HEAD" });
-          setImageExists(response.ok);
+          if (response.ok) {
+            setImageUrl(imageUrl);
+          } else {
+            setImageUrl(defaultImageUrl);
+          }
         } catch (error) {
-          setImageExists(false);
+          setImageUrl(defaultImageUrl);
         }
       };
 
@@ -104,12 +106,6 @@ const Single = () => {
     }
   }, [item, category]);
 
-  // Función para agregar el ítem a favoritos
-  const addToFavorites = () => {
-    actions.addFavorite(item);
-  };
-
-  // Si no hay categoría o el ítem no existe
   if (!category) {
     return <div>Error: No category provided</div>;
   }
@@ -123,38 +119,27 @@ const Single = () => {
       <div className="card">
         <div className="row">
           <div className="col-md-4">
-            {imageExists ? (
-              <img
-                src={getImageUrl(item.uid, category)}
-                alt={item.name}
-                className="img-fluid rounded-left"
-              />
-            ) : (
-              <p>No image available</p>
-            )}
+            <img
+              src={imageUrl}
+              alt={item.name}
+              className="img-fluid rounded-left"
+            />
           </div>
           <div className="col-md-8">
             <div className="card-body">
               <h1 className="card-title">{item.name}</h1>
               <h3>Details</h3>
               <ul>
-                {details ? (
-                  Object.keys(details).map((key) => (
-                    <li key={key}>
-                      <strong>{key.charAt(0).toUpperCase() + key.slice(1)}:</strong>{" "}
-                      {details[key]}
-                    </li>
-                  ))
-                ) : (
-                  <li>No details available</li>
-                )}
+                {selectedDetails[category]?.map((key) => (
+                  <li key={key}>
+                    <strong>{key.charAt(0).toUpperCase() + key.slice(1)}:</strong>{" "}
+                    {details[key] || "N/A"}
+                  </li>
+                ))}
               </ul>
               <div className="d-flex justify-content-between">
                 <button onClick={() => navigate(-1)} className="btn btn-secondary">
                   Back
-                </button>
-                <button onClick={addToFavorites} className="btn btn-primary">
-                  Add to Favorites
                 </button>
               </div>
             </div>

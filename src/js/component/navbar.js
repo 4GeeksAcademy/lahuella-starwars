@@ -40,7 +40,7 @@ export const Navbar = () => {
                                     store.favorites.map((favorite, index) => (
                                         <li key={index} className="d-flex justify-content-between">
                                             <a className="dropdown-item">
-                                            <Link to={`/single/${favorite.id}`} className='Link-nav'>{favorite.name}</Link>
+                                            <p>{favorite.name}</p>
                                             </a>
                                             <button
                                                 className="btn btn-link text-danger"

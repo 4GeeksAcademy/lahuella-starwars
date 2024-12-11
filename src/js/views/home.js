@@ -5,6 +5,8 @@ import { Link } from "react-router-dom";
 export const Home = () => {
     const { store, actions } = useContext(Context);
 
+    const defaultImageUrl = "https://wallpapers.com/images/featured/logo-de-star-wars-xcw4lfbj6xjx2qvm.jpg";
+
     const renderCategory = (title, items, type) => (
         <div>
             <h2 className="fade-in">{title}</h2>
@@ -15,7 +17,14 @@ export const Home = () => {
                     return (
                         <div key={item.uid} className="col-3">
                             <div className="card fade-in">
-                                <img src={imageUrl} alt={item.name} className="card-img-top" />
+                                <img
+                                    src={imageUrl}
+                                    alt={item.name}
+                                    className="card-img-top"
+                                    onError={(e) => {
+                                        e.target.src = defaultImageUrl;
+                                    }}
+                                />
                                 <div className="card-body">
                                     <h5 className="card-title">{item.name}</h5>
                                     <Link
@@ -26,8 +35,7 @@ export const Home = () => {
                                     </Link>
                                     <button
                                         onClick={() => actions.addFavorite({ id: item.uid, name: item.name })}
-                                        className="btn btn-warning"
-                                    >
+                                        className="btn btn-warning">
                                         + Fav
                                     </button>
                                 </div>
@@ -48,4 +56,3 @@ export const Home = () => {
         </div>
     );
 };
-
